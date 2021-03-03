@@ -1,18 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <Chronometer
+        android:id="@+id/timer"
+        android:layout_width="196dp"
+        android:layout_height="148dp"
+        android:layout_marginStart="107dp"
+        android:layout_marginTop="268dp"
+        android:layout_marginEnd="108dp"
+        android:layout_marginBottom="25dp"
+        android:textAlignment="center"
+        android:textSize="40sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Spinner
+        android:id="@+id/profileSelection"
+        android:layout_width="158dp"
+        android:layout_height="28dp"
+        android:layout_below="@+id/timer"
+        android:layout_marginStart="129dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="129dp"
+        android:layout_marginBottom="21dp" />
+
+    <Button
+        android:id="@+id/startTimer"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/profileSelection"
+        android:layout_alignStart="@+id/profileSelection"
+        android:layout_alignEnd="@+id/profileSelection"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="31dp"
+        android:layout_marginBottom="193dp"
+        android:onClick="startTimer"
+        android:text="Start Timer"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/stopTimer"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/profileSelection"
+        android:layout_alignTop="@+id/startTimer"
+        android:layout_alignEnd="@+id/profileSelection"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="31dp"
+        android:onClick="stopTimer"
+        android:text="Stop Timer"
+        android:textSize="12sp" />
+
+</RelativeLayout>
