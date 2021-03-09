@@ -73,6 +73,20 @@ public class MyDialogFragment extends DialogFragment {
             });
             builder.setView(selection);
         }
+        else if(getTag().equals("data"))
+        {
+            Spinner spinner = (Spinner) getActivity().findViewById(R.id.dataSpinner);
+            String mSelectionClause = contentProvider.COLUMN_PROFILES + " = ? ";
+            String[] mSelectionArgs = { spinner.getSelectedItem().toString()};
+            int savedTime = 0;
+            mCursor = getActivity().getContentResolver().query(contentProvider.CONTENT_URI, null, mSelectionClause, mSelectionArgs, null);
+            if (mCursor.getCount() > 0) {
+                mCursor.moveToNext();
+                savedTime = mCursor.getInt(2);
+            }
+            builder.setTitle("In the Activity " + spinner.getSelectedItem().toString() + " you have spent a total of ");
+            builder.setMessage(Math.ceil(savedTime/60) + " minutes.");
+        }
         return builder.create();
     }
 

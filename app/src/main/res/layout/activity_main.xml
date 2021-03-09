@@ -85,4 +85,13 @@
         app:layout_constraintStart_toStartOf="@+id/profileSelection"
         app:layout_constraintTop_toBottomOf="@+id/stopTimer" />
 
+    <Button
+        android:id="@+id/toAggro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="toDataActivity"
+        android:text="Show Time Data"
+        tools:layout_editor_absoluteX="232dp"
+        tools:layout_editor_absoluteY="16dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

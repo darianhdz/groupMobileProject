@@ -3,6 +3,7 @@ package com.example.mobilegroupproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -38,10 +39,16 @@ public class MainActivity extends AppCompatActivity {
         Button start = (Button) findViewById(R.id.startTimer);
         start.setVisibility(View.INVISIBLE);
         start.setClickable(false);
+        Spinner spinner = (Spinner) findViewById(R.id.profileSelection);
+        ((Spinner) spinner).getSelectedView().setEnabled(false); //source : https://stackoverflow.com/questions/7641879/how-do-i-make-a-spinners-disabled-state-look-disabled
+        spinner.setEnabled(false);
     }
 
     public void stopTimer(View view)
     {
+        Spinner spinner = (Spinner) findViewById(R.id.profileSelection);
+        ((Spinner) spinner).getSelectedView().setEnabled(true);
+        spinner.setEnabled(true);
         long timePassed = SystemClock.elapsedRealtime() - timer.getBase();
         timePassed /= 1000;
         timer.setBase(SystemClock.elapsedRealtime());
@@ -54,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         stop.setClickable(false);
 
         ContentValues mUpdateValues = new ContentValues();
-        Spinner spinner = (Spinner) findViewById(R.id.profileSelection);
+        spinner = (Spinner) findViewById(R.id.profileSelection);
 
         String mSelectionClause = contentProvider.COLUMN_PROFILES + " = ? ";
         String[] mSelectionArgs = { spinner.getSelectedItem().toString()};
@@ -93,11 +100,15 @@ public class MainActivity extends AppCompatActivity {
             if (mCursor.getCount() > 0) {
                 mCursor.moveToNext();
                 adapter.add(mCursor.getString(1));
-                Log.d("here", mCursor.getString(1));
-                Log.d("here", String.valueOf(mCursor.getInt(2)));
                 i++;
             }
         }
         selection.setAdapter(adapter);
+    }
+
+    public void toDataActivity(View view)
+    {
+        Intent intent = new Intent(getApplicationContext(), TimeAggregation.class);
+        getApplicationContext().startActivity(intent);
     }
 }
