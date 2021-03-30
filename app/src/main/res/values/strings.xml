@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Mobile Group Project</string>
+    <string-array name="color_array">
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Black</item>
+        <item>White</item>
+        <item>Grey</item>
+        <item>Red</item>
+    </string-array>
 </resources>

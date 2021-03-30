@@ -7,91 +7,75 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Chronometer
-        android:id="@+id/timer"
-        android:layout_width="196dp"
-        android:layout_height="148dp"
-        android:layout_marginStart="104dp"
-        android:layout_marginTop="160dp"
-        android:textAlignment="center"
-        android:textSize="40sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/profileSelection"
-        android:layout_width="158dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="129dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="129dp"
-        android:layout_marginBottom="21dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timer" />
+    <ImageView
+        android:id="@+id/backgroundView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="?attr/selectableItemBackground"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="626dp" />
 
     <Button
         android:id="@+id/startTimer"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="31dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="31dp"
-        android:layout_marginBottom="193dp"
         android:onClick="startTimer"
         android:text="Start Timer"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/profileSelection"
+        app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="@+id/profileSelection"
         app:layout_constraintTop_toBottomOf="@+id/profileSelection" />
+
+    <Chronometer
+        android:id="@+id/timer"
+        android:layout_width="196dp"
+        android:layout_height="148dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="216dp"
+        android:layout_marginEnd="111dp"
+        android:layout_marginBottom="28dp"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/profileSelection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/stopTimer"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="31dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="31dp"
         android:onClick="stopTimer"
         android:text="Stop Timer"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/profileSelection"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/profileSelection"
         app:layout_constraintTop_toTopOf="@+id/startTimer" />
 
-    <Button
-        android:id="@+id/profileAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="31dp"
-        android:onClick="addEntries"
-        android:text="Add Activities"
-        app:layout_constraintEnd_toEndOf="@+id/profileSelection"
-        app:layout_constraintStart_toStartOf="@+id/profileSelection"
-        app:layout_constraintTop_toBottomOf="@+id/stopTimer" />
+    <Spinner
+        android:id="@+id/profileSelection"
+        android:layout_width="158dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="@+id/timer"
+        app:layout_constraintStart_toStartOf="@+id/timer"
+        app:layout_constraintTop_toBottomOf="@+id/timer" />
 
-    <Button
-        android:id="@+id/profileRemove"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="31dp"
-        android:onClick="removeEntries"
-        android:text="Remove activities"
-        app:layout_constraintEnd_toEndOf="@+id/profileSelection"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="@+id/profileSelection"
-        app:layout_constraintTop_toBottomOf="@+id/stopTimer" />
-
-    <Button
-        android:id="@+id/toAggro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="toDataActivity"
-        android:text="Show Time Data"
-        tools:layout_editor_absoluteX="232dp"
-        tools:layout_editor_absoluteY="16dp" />
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
