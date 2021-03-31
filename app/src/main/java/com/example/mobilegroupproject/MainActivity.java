@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
     public void toDataActivity()
     {
         Intent intent = new Intent(getApplicationContext(), TimeAggregation.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplicationContext().startActivity(intent);
     }
 

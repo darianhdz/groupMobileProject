@@ -32,6 +32,7 @@ public class TimeAggregation extends AppCompatActivity{
     public void goBack(View view)
     {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplicationContext().startActivity(intent);
     }
 
