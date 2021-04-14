@@ -8,12 +8,26 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 public class contentProvider extends ContentProvider {
     public final static String DBNAME = "AppDatabase";
     public final static String TABLE_PROFILESTABLE = "profilestable";
+    public final static String TABLE_SESSIONSTABLE = "sessionstable";
+    public final static String TABLE_PROFILESESSIONSTABLE = "profilesessionstable";
+
     public final static String COLUMN_PROFILES = "profilename";
     public final static String COLUMN_TIME = "profiletime";
+
+    public final static String COLUMN_PROID = "pid";
+    public final static String COLUMN_SESID = "sid";
+    public final static String COLUMN_date = "sessiondate";
+    public final static String COLUMN_TEXT = "note";
+
+    public final static String COLUMN_SESSIONNUM = "totalsessions";
+    public final static String COLUMN_LONG = "longest";
+
+    public final static String COLUMN_STIME = "time";
 
     public static final String AUTHORITY = "com.example.mobilegroupproject";
     public static final Uri CONTENT_URI = Uri.parse(
@@ -32,6 +46,32 @@ public class contentProvider extends ContentProvider {
             COLUMN_TIME +
             " TEXT)";
 
+    private static final String SQL_CREATE_MAINONE = "CREATE TABLE " +
+            TABLE_PROFILESTABLE +  // Table's name
+            "(" +               // The columns in the table
+            " _ID INTEGER PRIMARY KEY, " +
+            COLUMN_PROFILES +
+            " TEXT," +
+            COLUMN_STIME +
+            " TEXT," +
+            COLUMN_SESSIONNUM +
+            " INTEGER," +
+            COLUMN_LONG +
+            " INTEGER)"
+            ;
+
+    private static final String SQL_CREATE_MAINTWO = "CREATE TABLE " +
+            TABLE_SESSIONSTABLE +  // Table's name
+            "(" +               // The columns in the table
+            " _SID INTEGER PRIMARY KEY, " +
+            COLUMN_PROID +
+            " INTEGER," +
+            COLUMN_TIME +
+            " INTEGER," +
+            COLUMN_date +
+            " INTEGER," +
+            COLUMN_TEXT +
+            " TEXT)";
     @Override
     public boolean onCreate() {
         mOpenHelper = new MainDatabaseHelper(getContext());
@@ -81,7 +121,9 @@ public class contentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            Log.i("contentProvider", "onCreate: ");
             db.execSQL(SQL_CREATE_MAIN);
+            //db.execSQL(SQL_CREATE_MAINONE); db.execSQL(SQL_CREATE_MAINTWO);
         }
 
         @Override
