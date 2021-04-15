@@ -1,16 +1,26 @@
 package com.example.mobilegroupproject;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
@@ -26,20 +36,27 @@ import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String CHANNEL_ID = "timer";
     Cursor mCursor;
     static Chronometer timer;
+    String selection;
+    static Button startButton;
+    static Button stop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        createNotificationChannel();
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         timer = (Chronometer) findViewById(R.id.timer);
-        Button stop = (Button) findViewById(R.id.stopTimer);
+        startButton = findViewById(R.id.startTimer);
+        stop = (Button) findViewById(R.id.stopTimer);
         stop.setVisibility(View.INVISIBLE);
         stop.setClickable(false);
         createSpinner();
@@ -58,10 +75,15 @@ public class MainActivity extends AppCompatActivity {
         Spinner spinner = (Spinner) findViewById(R.id.profileSelection);
         ((Spinner) spinner).getSelectedView().setEnabled(false); //source : https://stackoverflow.com/questions/7641879/how-do-i-make-a-spinners-disabled-state-look-disabled
         spinner.setEnabled(false);
+        selection = spinner.getSelectedItem().toString();
+        Intent intent1 = new Intent(this, NotifService.class);
+        intent1.putExtra("selection", selection);
+        startService(intent1);
     }
 
     public void stopTimer(View view)
     {
+
         Spinner spinner = (Spinner) findViewById(R.id.profileSelection);
         ((Spinner) spinner).getSelectedView().setEnabled(true);
         spinner.setEnabled(true);
@@ -69,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         timePassed /= 1000;
         timer.setBase(SystemClock.elapsedRealtime());
         timer.stop();
+        Intent intent1 = new Intent(this, NotifService.class);
+        stopService(intent1);
         Button start = (Button) findViewById(R.id.startTimer);
         start.setVisibility(View.VISIBLE);
         start.setClickable(true);
@@ -92,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         int mRowsUpdated = 0;
         mRowsUpdated = getContentResolver().update(contentProvider.CONTENT_URI, mUpdateValues,
                 mSelectionClause, mSelectionArgs);
+        selection = null;
     }
 
     public void addEntries()
@@ -183,4 +208,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "timerNotif";
+            String description = "timer notification";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent.getStringExtra("method").equals("stop")){
+            stopTimer(findViewById(R.id.stopTimer));
+        }
+    }
+
 }

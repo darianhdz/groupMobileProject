@@ -53,7 +53,6 @@ public class TimeAggregation extends AppCompatActivity{
     {
         GraphView g = (GraphView) findViewById(R.id.SessionGraph);  //Hours per Session
         //GraphView h = (GraphView) findViewById(R.id.SessionGraph);  //Hours per Day
-
         MyTime = (TextView)findViewById(R.id.Text_TimeSpent);
         //AvgTimeStr = (TextView)findViewById(R.id.Text_TimeSpentString);
         MyTotalTime= (TextView)findViewById(R.id.Text_TimeTotal);
