@@ -31,7 +31,9 @@ public class contentProvider extends ContentProvider {
 
     public static final String AUTHORITY = "com.example.mobilegroupproject";
     public static final Uri CONTENT_URI = Uri.parse(
-            "content://com.example.mobilegroupproject/" + TABLE_PROFILESTABLE);
+                "content://com.example.mobilegroupproject/" + TABLE_PROFILESTABLE);
+    public static final Uri CONTENT_URIOne = Uri.parse(
+            "content://com.example.mobilegroupproject/" + TABLE_SESSIONSTABLE);
 
     private static UriMatcher sUriMatcher;
 
@@ -44,6 +46,18 @@ public class contentProvider extends ContentProvider {
             COLUMN_PROFILES +
             " TEXT," +
             COLUMN_TIME +
+            " TEXT)";
+    private static final String SQL_CREATE_MAINTWO = "CREATE TABLE " +
+            TABLE_SESSIONSTABLE +  // Table's name
+            "(" +               // The columns in the table
+            " _SID INTEGER PRIMARY KEY, " +
+            COLUMN_PROFILES +
+            " TEXT," +
+            COLUMN_TIME +
+            " INTEGER," +
+            COLUMN_date +
+            " INTEGER," +
+            COLUMN_TEXT +
             " TEXT)";
 
     private static final String SQL_CREATE_MAINONE = "CREATE TABLE " +
@@ -59,19 +73,6 @@ public class contentProvider extends ContentProvider {
             COLUMN_LONG +
             " INTEGER)"
             ;
-
-    private static final String SQL_CREATE_MAINTWO = "CREATE TABLE " +
-            TABLE_SESSIONSTABLE +  // Table's name
-            "(" +               // The columns in the table
-            " _SID INTEGER PRIMARY KEY, " +
-            COLUMN_PROID +
-            " INTEGER," +
-            COLUMN_TIME +
-            " INTEGER," +
-            COLUMN_date +
-            " INTEGER," +
-            COLUMN_TEXT +
-            " TEXT)";
     @Override
     public boolean onCreate() {
         mOpenHelper = new MainDatabaseHelper(getContext());
@@ -86,7 +87,7 @@ public class contentProvider extends ContentProvider {
         if (profile.equals(""))
             return null;
 
-        long id = mOpenHelper.getWritableDatabase().insert(TABLE_PROFILESTABLE, null, values);
+        long id = mOpenHelper.getWritableDatabase().insert(uri.toString().substring(41), null, values);
 
         return Uri.withAppendedPath(CONTENT_URI, "" + id);
     }
@@ -94,7 +95,11 @@ public class contentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        return mOpenHelper.getWritableDatabase().update(TABLE_PROFILESTABLE, values, selection, selectionArgs);
+        Log.i("uriToString", uri.toString().substring(41));
+        //mOpenHelper.getWritableDatabase().update(TABLE_SESSIONSTABLE, values, selection, selectionArgs);
+        return mOpenHelper.getWritableDatabase().update(uri.toString().substring(41), values, selection, selectionArgs);
+
+        //return mOpenHelper.getWritableDatabase().update(TABLE_PROFILESTABLE, values, selection, selectionArgs);
     }
 
     @Override
@@ -105,7 +110,7 @@ public class contentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        return mOpenHelper.getReadableDatabase().query(TABLE_PROFILESTABLE, projection, selection, selectionArgs,
+        return mOpenHelper.getReadableDatabase().query(uri.toString().substring(41), projection, selection, selectionArgs,
                 null, null, sortOrder);
     }
 
@@ -123,7 +128,9 @@ public class contentProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
             Log.i("contentProvider", "onCreate: ");
             db.execSQL(SQL_CREATE_MAIN);
-            //db.execSQL(SQL_CREATE_MAINONE); db.execSQL(SQL_CREATE_MAINTWO);
+            Log.i("Database","DataBASED complete");
+            db.execSQL(SQL_CREATE_MAINTWO);
+            //db.execSQL(SQL_CREATE_MAINTWO);
         }
 
         @Override

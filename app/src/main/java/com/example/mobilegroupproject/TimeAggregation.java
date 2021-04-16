@@ -23,6 +23,8 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 
 import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.Vector;
 
 public class TimeAggregation extends AppCompatActivity{
     GraphView graph;
@@ -38,6 +40,7 @@ public class TimeAggregation extends AppCompatActivity{
     TextView FirstDay;
     TextView TotDay;
 
+    Spinner selection;
 
     ScrollView myScroll;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
@@ -54,52 +57,63 @@ public class TimeAggregation extends AppCompatActivity{
         GraphView g = (GraphView) findViewById(R.id.SessionGraph);  //Hours per Session
         //GraphView h = (GraphView) findViewById(R.id.SessionGraph);  //Hours per Day
         MyTime = (TextView)findViewById(R.id.Text_TimeSpent);
-        //AvgTimeStr = (TextView)findViewById(R.id.Text_TimeSpentString);
         MyTotalTime= (TextView)findViewById(R.id.Text_TimeTotal);
         SessionTot= (TextView)findViewById(R.id.Text_SessionTotal);
         DayLong = (TextView)findViewById(R.id.Text_LongDay);
         FirstDay = (TextView)findViewById(R.id.Text_FirstDay);
         TotDay = (TextView)findViewById(R.id.Text_TotalDays);
         MyTotalSesTime = (TextView)findViewById(R.id.Text_TimeSpentSes);
-        //TotalTimeStr=(TextView)findViewById(R.id.Text_TotalTimeString);
 
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
-        LineGraphSeries<DataPoint> seriesAvg = new LineGraphSeries<>();
+        LineGraphSeries<DataPoint> seriesDate = new LineGraphSeries<>();
 
-        LineGraphSeries<DataPoint> series2= new LineGraphSeries<>();    //Days
-        double sumofY = 0;
-        double sumofY2= 0;
-        double longofY2 = 0;
+        double TotalTime = 0;
+        long first_date = 0;
+        int longestses = 0;
+        int longestsesLen = 0;
+        long longestsesDate= 0;
+        long LastDay = 0;
 
-        double[] y = {1,2.2, 1.7, 8.1,0.3,0.1,0.2,3.2, 2.7, 6.1, 1.2,1.5, 8.1,0.3,0.6,0.3,3.2, 2.7, 6.1}; //Demo of hours spent on an assignment
-        double[] y2= {12.8, 5.9,8.8,8.4,0,0,4.4, 3.6, 2.2,1.3, 6.3, 4.1};
-        String[] w = {"Writing Code", "Debugging", "Testing", "Writing Code", "Break"};
-        for (int x = 0; x < y.length; x++)
-        {
-            DataPoint myDP = new DataPoint(x, y[x]);
-            DataPoint AvDP = new DataPoint(x, sumofY/x);
-            sumofY += y[x];
-            series.appendData(myDP,true, 100);
-            seriesAvg.appendData(AvDP, true, 100);
-            series.setOnDataPointTapListener(new OnDataPointTapListener()
-            {
-                @Override
-                public void onTap(Series series, DataPointInterface dataPoint) {
-                    Toast.makeText(getApplicationContext(), "Session " + (int)dataPoint.getX() + "\nDescription: " + w[(int)dataPoint.getY() % w.length] + "\nHours " + dataPoint.getY(), Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(getApplicationContext(), "On day " + (int)dataPoint.getX() + " you spent "+dataPoint.getY() + " hours.", Toast.LENGTH_SHORT).show();
+        int totalDays = 0;
+        int totalSess = 0;
+
+
+        Vector<Double> SessionV = new Vector<Double>();
+        Vector<Long> DayV = new Vector<Long>();
+
+
+        String mSelectionClause = contentProvider.COLUMN_PROFILES + " = ? ";
+        String[] mSelectionArgs = { selection.getSelectedItem().toString()};
+        mCursor = getContentResolver().query(contentProvider.CONTENT_URIOne, null, mSelectionClause, mSelectionArgs, null);
+        int i = 0;
+        while (i < mCursor.getCount()) {
+            if (mCursor.getCount() > 0) {
+                mCursor.moveToNext();
+                SessionV.add(mCursor.getDouble(2) / 60 );
+                TotalTime += mCursor.getDouble(2) / 60;
+                DataPoint myDP = new DataPoint(i, mCursor.getDouble(2));
+                series.appendData(myDP,true,100);
+                if (longestsesLen < mCursor.getInt(2)) {
+                    longestses = i;
+                    longestsesDate= mCursor.getLong(3);
+                    longestsesLen = mCursor.getInt(2) / 60;
+                }
+                if ((first_date > mCursor.getLong(3)) || (first_date == 0))
+                {
+                    first_date = mCursor.getLong(3);
+                }
+                if (LastDay < mCursor.getLong(3))
+                {
+                    LastDay = mCursor.getLong(3);
                 }
 
-            });
-        }
-        for (int x = 0; x < y2.length; x++)
-        {
-            if (longofY2 < y2[x])
-            {
-                longofY2 = y2[x];
+                seriesDate.appendData(new DataPoint(i, (mCursor.getLong(3) - first_date)),false, 100);
+                totalSess = i++;
             }
-            sumofY2 += y2[x];
         }
+
+        totalDays = (int)(Math.ceil(LastDay - first_date)/86400000);
 
         /*
         for (int x = 0; x < y2.length; x++)
@@ -120,23 +134,31 @@ public class TimeAggregation extends AppCompatActivity{
         */
 
         g.addSeries(series);
-        g.addSeries(seriesAvg);
         //g.addSeries(series2);
 
         //series2.setColor(Color.RED);
         series.setColor(Color.BLUE);
-        seriesAvg.setColor(Color.RED);
         GridLabelRenderer gridLabel = g.getGridLabelRenderer();
         gridLabel.setHorizontalAxisTitle("Sessions");
         gridLabel.setVerticalAxisTitle("Time");
+        if (totalSess == 0)
+        {
+            totalSess ++;   //This is in case someone decides to be funny
+                            //And try to enter the Time Aggregation
+                            //Without starting a single session
+        }
+        if (totalDays == 0)
+        {
+            totalDays++;
+        }
 
-        MyTime.setText((df2.format(sumofY / y.length)) + " Hours per session.");
-        MyTotalSesTime.setText((df2.format(sumofY2 / y2.length)) + " Hours per day.");
-        MyTotalTime.setText(df2.format(sumofY) + " Hours. ");
-        SessionTot.setText(y.length + " Sessions");
-        DayLong.setText("March 29 2021 (" + longofY2 + " hours)");
-        FirstDay.setText("March 19 2021");
-        TotDay.setText(y2.length + " Days");
+        MyTotalTime.setText(df2.format(TotalTime) + " Minutes. ");
+        MyTime.setText((df2.format((TotalTime)/totalSess)) + " minutes per session.");
+        MyTotalSesTime.setText((df2.format((TotalTime)/totalDays)) + " Hours per day.");
+        SessionTot.setText(totalSess + " Sessions");
+        DayLong.setText( new Date(longestsesDate).toString() + " (" + longestsesLen + " minutes)");
+        FirstDay.setText(new Date(first_date).toString());
+        TotDay.setText(totalDays + " Days");
 
        myScroll.setVisibility(View.VISIBLE);
 
@@ -164,7 +186,7 @@ public class TimeAggregation extends AppCompatActivity{
     {
         mCursor = getContentResolver().query(contentProvider.CONTENT_URI, null, null, null, null);
         int i = 0;
-        Spinner selection = (Spinner) findViewById(R.id.dataSpinner);
+        selection = (Spinner) findViewById(R.id.dataSpinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         while (i < mCursor.getCount()) {
             if (mCursor.getCount() > 0) {

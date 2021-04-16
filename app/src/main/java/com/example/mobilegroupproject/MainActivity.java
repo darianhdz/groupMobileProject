@@ -33,10 +33,12 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import java.util.Calendar;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity {
@@ -101,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
         stop.setClickable(false);
 
         ContentValues mUpdateValues = new ContentValues();
-        spinner = (Spinner) findViewById(R.id.profileSelection);
 
+        spinner = (Spinner) findViewById(R.id.profileSelection);
         String mSelectionClause = contentProvider.COLUMN_PROFILES + " = ? ";
         String[] mSelectionArgs = { spinner.getSelectedItem().toString()};
         long savedTime = 0;
@@ -111,11 +113,21 @@ public class MainActivity extends AppCompatActivity {
             mCursor.moveToNext();
             savedTime = mCursor.getInt(2);
         }
+        ContentValues mInsertValues = new ContentValues();
+
         mUpdateValues.put(contentProvider.COLUMN_PROFILES, spinner.getSelectedItem().toString());
         mUpdateValues.put(contentProvider.COLUMN_TIME, timePassed + savedTime);
+
+        mInsertValues.put(contentProvider.COLUMN_PROFILES, spinner.getSelectedItem().toString());
+        mInsertValues.put(contentProvider.COLUMN_TIME, timePassed);
+        mInsertValues.put(contentProvider.COLUMN_date, new Date().getTime());
+        mInsertValues.put(contentProvider.COLUMN_TEXT, "tEST");
+
+
         int mRowsUpdated = 0;
         mRowsUpdated = getContentResolver().update(contentProvider.CONTENT_URI, mUpdateValues,
                 mSelectionClause, mSelectionArgs);
+        getContentResolver().insert(contentProvider.CONTENT_URIOne,mInsertValues);
         selection = null;
     }
 
@@ -136,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         mCursor = getContentResolver().query(contentProvider.CONTENT_URI, null, null, null, null);
         int i = 0;
         Spinner selection = (Spinner) findViewById(R.id.profileSelection);
+        startButton.setClickable(mCursor.getCount() > 0);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         while (i < mCursor.getCount()) {
             if (mCursor.getCount() > 0) {
