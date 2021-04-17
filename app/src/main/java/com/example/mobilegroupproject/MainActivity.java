@@ -237,8 +237,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(intent.getStringExtra("method").equals("stop")){
-            stopTimer(findViewById(R.id.stopTimer));
+        if(intent.hasExtra("method")) {
+            if (intent.getStringExtra("method").equals("stop")) {
+                stopTimer(findViewById(R.id.stopTimer));
+            }
         }
     }
 
